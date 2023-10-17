@@ -71,7 +71,25 @@ class _GroceryItemScreenState extends State<GroceryItemScreen> {
         actions: [
           IconButton(
               onPressed: (){
-                //TODO: Add callback handler
+                final groceryItem = GroceryItem(
+                    id: widget.originalItem?.id ?? const Uuid().v1(),
+                    name: _nameController.text,
+                    importance: _importance,
+                    color: _currentColor,
+                    quantity: _currentSliderValue,
+                    date: DateTime(
+                      _dueDate.year,
+                      _dueDate.month,
+                      _dueDate.day,
+                      _timeOfDay.hour,
+                      _timeOfDay.minute,
+                    ),
+                );
+                if (widget.isUpdating){
+                  widget.onUpdate(groceryItem);
+                } else {
+                  widget.onCreate(groceryItem);
+                }
               },
               icon: const Icon(Icons.check),
           ),
@@ -107,7 +125,7 @@ class _GroceryItemScreenState extends State<GroceryItemScreen> {
                     _dueDate.year,
                     _dueDate.month,
                     _dueDate.day,
-                    _dueDate.hour,
+                    _timeOfDay.hour,
                     _timeOfDay.minute,
                   ),
                 ),
@@ -244,18 +262,18 @@ class _GroceryItemScreenState extends State<GroceryItemScreen> {
               style: GoogleFonts.lato(fontSize: 28.0),
             ),
             TextButton(
+              child: const Text('Select'),
                 onPressed: () async {
                   final timeOfDay = await showTimePicker(
-                      context: context, 
-                      initialTime: TimeOfDay.now()
+                    initialTime: TimeOfDay.now(),
+                      context: context,
                   );
                   setState(() {
                     if(timeOfDay != null){
-                      _timeOfDay = _timeOfDay;
+                      _timeOfDay = timeOfDay;
                     }
                   });
-                }, 
-                child: const Text('Select'),
+                },
             ),
           ],
         ),
